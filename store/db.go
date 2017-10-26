@@ -63,3 +63,24 @@ func (db *DB) Put(key, val string) error {
 	}
 	return nil
 }
+
+func (db *DB) Delete(key string) error {
+	err := db.badgerDB.Update(func(txn *badger.Txn) error {
+		err := txn.Delete([]byte(key))
+		return err
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db *DB) NewIterator(options badger.IteratorOptions) *badger.Iterator {
+	var it *badger.Iterator
+	db.badgerDB.View(func(txn *badger.Txn) error {
+		it = txn.NewIterator(options)
+		return nil
+	})
+
+	return it
+}

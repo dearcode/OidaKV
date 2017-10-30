@@ -1,8 +1,11 @@
 package store
 
 import (
-	"OidaKV/proto"
 	"os"
+
+	"github.com/zssky/log"
+
+	"github.com/dearcode/OidaKV/proto"
 )
 
 type Table struct {
@@ -17,7 +20,7 @@ func NewTable(keyPath, valuePath string) *Table {
 	table.db = NewDB()
 	err := table.db.Open(keyPath, valuePath)
 	if err != nil {
-		log.Println("Open DB failed: ", err)
+		log.Info("Open DB failed: ", err)
 		return nil
 	}
 	return table

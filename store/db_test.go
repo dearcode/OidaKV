@@ -1,25 +1,43 @@
 package store
 
 import (
+	"fmt"
+	"os"
 	"testing"
+	"time"
 )
+
+var (
+	tmpDir string
+)
+
+func TestMain(main *testing.M) {
+	tmpDir = fmt.Sprintf("./data_%x/", time.Now().UnixNano())
+	if err := os.MkdirAll(tmpDir, os.ModeDir|os.ModePerm); err != nil {
+		panic(err.Error())
+	}
+
+	main.Run()
+
+	if err := os.RemoveAll(tmpDir); err != nil {
+		panic(err.Error())
+	}
+}
 
 func TestFunction(t *testing.T) {
 	db := NewDB()
-	err := db.Open("./data", "./data")
-	if err != nil {
-		t.Error("open db error %s", err)
+	if err := db.Open(tmpDir, tmpDir); err != nil {
+		t.Fatalf("open db error:%v", err)
 	}
 
-	err = db.Put("testkey", "testvalue")
-	if err != nil {
-		t.Error("put value error %s", err)
+	if err := db.Put("testkey", "testvalue"); err != nil {
+		t.Fatalf("put value error:%v", err)
 	}
 
 	val, err := db.Get("testkey")
 	if err != nil {
-		t.Error("get value error %s", err)
+		t.Fatalf("get value error:%v", err)
 	}
-	t.Log("get value:%s", val)
+	t.Logf("get value:%s", val)
 	db.Close()
 }

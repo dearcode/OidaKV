@@ -13,9 +13,9 @@ func NewDB() *DB {
 	return db
 }
 
-func (db *DB) Open(keyPaht, valuePath string) error {
+func (db *DB) Open(keyPath, valuePath string) error {
 	opts := badger.DefaultOptions
-	opts.Dir = keyPaht
+	opts.Dir = keyPath
 	opts.ValueDir = valuePath
 	badgerDB, err := badger.Open(opts)
 	if err != nil {
